@@ -1,0 +1,25 @@
+{
+  "name": "termin",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "public/",
+      "database.json",
+      "subscriptions.json",
+      "test.js",
+      "notes.txt"
+    ]
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.13.2",
+    "express": "^5.2.1"
+  }
+}
