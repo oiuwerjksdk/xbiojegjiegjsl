@@ -1,0 +1,172 @@
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Термин</title>
+</head>
+
+<body>
+  <input type="search" placeholder="Пребарај лекар или апарат">
+  <ol></ol>
+</body>
+<script>
+const OL = document.querySelector('ol')
+const INPUT = document.querySelector('input')
+let DATABASE, TIMEOUT_SEARCH
+
+
+fetch('./database.json', { signal: AbortSignal.timeout(4000) })
+  .then(res => res.json())
+  .then(data => {
+    DATABASE = data
+  })
+  .catch(err => {
+    document.body.innerHTML = '<div>Error - try refresh or return to homepage</div>'
+    console.log(err)
+  })
+
+
+INPUT.addEventListener('input', ON_INPUT)
+
+function ON_INPUT() {
+  const carretStart = INPUT.selectionStart
+  const carretEnd = INPUT.selectionEnd
+  INPUT.value = CYRILIC(INPUT.value)
+  INPUT.selectionStart = carretStart
+  INPUT.selectionEnd = carretEnd
+  clearTimeout(TIMEOUT_SEARCH)
+  TIMEOUT_SEARCH = setTimeout(() => {
+    const words = CYRILIC(INPUT.value)
+      .toLowerCase()
+      .split(' ')
+      .filter(el => el != '' && el != 'за' && el != 'на' && el != 'во')
+    const result = SEARCH(DATABASE, words)
+    RENDER(result)
+  }, 50)
+}
+
+
+function SEARCH(arr, arr2) {
+  const result = []
+  arr.forEach(el => {
+    let match = true
+    const tags = `${el.name} ${el.specialty} ${el.hospital} ${el.location} ${el.tags}`.toLowerCase()
+    arr2.forEach(word => {
+      !tags.includes(word) ? match = false : 0
+    })
+    match ? result.push(el) : 0
+  })
+  return result
+}
+
+
+function RENDER(result) {
+  let html = ''
+  result.forEach((el, index) => {
+    if (index < 99 && INPUT.value.replaceAll(' ', '')) {
+      html +=
+        `<a href='/timeslots.html?id=${el.id}' target='_self'>
+        <li>${el.name} (${el.specialty} - ${el.location})</li>
+      </a>`
+    }
+  })
+  OL.innerHTML = html
+}
+
+
+function CYRILIC(txt) {
+  return txt
+    .replaceAll('q', 'љ')
+    .replaceAll('w', 'њ')
+    .replaceAll('e', 'е')
+    .replaceAll('r', 'р')
+    .replaceAll('t', 'т')
+    .replaceAll('y', 'ѕ')
+    .replaceAll('u', 'у')
+    .replaceAll('i', 'и')
+    .replaceAll('o', 'о')
+    .replaceAll('p', 'п')
+    .replaceAll('[', 'ш')
+    .replaceAll(']', 'ѓ')
+    .replaceAll('\\', 'ж')
+    .replaceAll('a', 'а')
+    .replaceAll('s', 'с')
+    .replaceAll('d', 'д')
+    .replaceAll('f', 'ф')
+    .replaceAll('g', 'г')
+    .replaceAll('h', 'х')
+    .replaceAll('j', 'ј')
+    .replaceAll('k', 'к')
+    .replaceAll('l', 'л')
+    .replaceAll(';', 'ч')
+    .replaceAll('\'', 'ќ')
+    .replaceAll('z', 'з')
+    .replaceAll('x', 'џ')
+    .replaceAll('c', 'ц')
+    .replaceAll('v', 'в')
+    .replaceAll('b', 'б')
+    .replaceAll('n', 'н')
+    .replaceAll('m', 'м')
+    .replaceAll('Q', 'Љ')
+    .replaceAll('W', 'Њ')
+    .replaceAll('E', 'Е')
+    .replaceAll('R', 'Р')
+    .replaceAll('T', 'Т')
+    .replaceAll('Y', 'Ѕ')
+    .replaceAll('U', 'У')
+    .replaceAll('I', 'И')
+    .replaceAll('O', 'О')
+    .replaceAll('P', 'П')
+    .replaceAll('{', 'Ш')
+    .replaceAll('}', 'Ѓ')
+    .replaceAll('|', 'Ж')
+    .replaceAll('A', 'А')
+    .replaceAll('S', 'С')
+    .replaceAll('D', 'Д')
+    .replaceAll('F', 'Ф')
+    .replaceAll('G', 'Г')
+    .replaceAll('H', 'Х')
+    .replaceAll('J', 'Ј')
+    .replaceAll('K', 'К')
+    .replaceAll('L', 'Л')
+    .replaceAll(':', 'Ч')
+    .replaceAll('"', 'Ќ')
+    .replaceAll('Z', 'З')
+    .replaceAll('X', 'Џ')
+    .replaceAll('C', 'Ц')
+    .replaceAll('V', 'В')
+    .replaceAll('B', 'Б')
+    .replaceAll('N', 'Н')
+    .replaceAll('M', 'М')
+}
+</script>
+<style>
+body {
+  font-size: .9rem;
+  font-family: arial;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+input {
+  width: 100%;
+  height: 2.2rem;
+  padding: .25rem .75rem;
+  border-radius: 2rem;
+  text-align: center;
+}
+
+input:focus::placeholder {
+  color: transparent;
+}
+
+ol {
+  margin: 0;
+  padding: .5rem 1.25rem 0 1.25rem;
+}
+
+li {
+  padding: .75rem;
+}
+</style>
