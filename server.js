@@ -20,6 +20,20 @@ app.listen(3000, () => {
 })
 
 
+setInterval(function() {
+  axios('https://termin123456.onrender.com/')
+    .then(res => res)
+    .catch(err => err)
+}, 38000)
+
+
+setInterval(function() {
+  axios('https://termin123456.onrender.com/')
+    .then(res => res)
+    .catch(err => err)
+}, 69000)
+
+
 function iterate() {
   const IDs = Object.keys(subscriptions)
   let index = 0
