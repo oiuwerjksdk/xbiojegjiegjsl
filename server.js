@@ -24,14 +24,14 @@ setInterval(function() {
   axios('https://termin123456.onrender.com/')
     .then(res => res)
     .catch(err => err)
-}, 38000)
+}, 24000)
 
 
 setInterval(function() {
   axios('https://termin123456.onrender.com/')
     .then(res => res)
     .catch(err => err)
-}, 69000)
+}, 57000)
 
 
 function iterate() {
