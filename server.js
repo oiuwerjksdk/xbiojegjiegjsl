@@ -24,14 +24,14 @@ setInterval(function() {
   axios('https://termin123456.onrender.com/')
     .then(res => res)
     .catch(err => err)
-}, 24000)
+}, 38000)
 
 
 setInterval(function() {
   axios('https://termin123456.onrender.com/')
     .then(res => res)
     .catch(err => err)
-}, 57000)
+}, 69000)
 
 
 function iterate() {
@@ -64,10 +64,10 @@ function iterate() {
       console.log(counter, name, ':', subscriptions[data.id])
       if (counter > 1) {
         const subject = `${name} има нови термини`
-        const plain =
-          `${name} има нови термини: https://???/timeslots.html?id=${id}`
+        const plain = `${name} има нови термини: https://termin123456.onrender.com/timeslots.html?id=${id}`
         subscriptions[id].forEach(el => {
-          console.log('mock send email', el.email, subject)
+          sendMaileroo(el.email, subject, plain)
+          // console.log('mock send email', el.email, subject, plain)
         })
         delete subscriptions[id]
         fs.writeFileSync('./subscriptions.json', JSON.stringify(subscriptions))
@@ -84,6 +84,30 @@ async function getTimeslots(id) {
     signal: AbortSignal.timeout(4000)
   })
   return res.data
+}
+
+
+function sendMaileroo(to, subject, plain) {
+  const config = {
+    "from": {
+      "address": "termin@c9c7843d277b40a0.maileroo.org",
+      "display_name": "Термин"
+    },
+    "to": [{
+      "address": to
+    }],
+    "subject": subject,
+    "plain": plain
+  }
+  axios.post('https://smtp.maileroo.com/api/v2/emails', config, {
+      signal: AbortSignal.timeout(4000),
+      headers: {
+        "Content-Type": "application/json",
+        "X-Api-Key": '723eb9048e7d19db5c183b8ac4145304a6d36b5b9a79a48e9a7de516d0ed72e3'
+      }
+    })
+    .then(res => console.log(res.status, 'maileroo OK'))
+    .catch(err => console.log(err, 'maileroo ERR'))
 }
 
 
@@ -231,30 +255,6 @@ async function updateDB() {
 //       console.log('nodemailer OK')
 //     }
 //   })
-// }
-
-
-// function sendMaileroo(to, subject, plain) {
-//   const config = {
-//     "from": {
-//       "address": "termin@?????????????.maileroo.org",
-//       "display_name": "Термин"
-//     },
-//     "to": [{
-//       "address": to
-//     }],
-//     "subject": subject,
-//     "plain": plain
-//   }
-//   axios.post('https://smtp.maileroo.com/api/v2/emails', config, {
-//       signal: AbortSignal.timeout(4000),
-//       headers: {
-//         "Content-Type": "application/json",
-//         "X-Api-Key": '2329348826624ea228a23585b7fc6098c4fa63ba1323b134dd97dce835cc68da'
-//       }
-//     })
-//     .then(res => console.log(res.status, 'maileroo OK'))
-//     .catch(err => console.log(err, 'maileroo ERR'))
 // }
 
 
