@@ -89,11 +89,11 @@ function RENDER(timeslots, name) {
     divDate.append(divSlotContainer)
     toRender.append(divDate)
   }
-  DIV_NAME.innerText = name
   DIV_TIMESLOTS.innerHTML = toRender.innerHTML
   if (!DIV_TIMESLOTS.querySelectorAll('.available').length && !DIV_TIMESLOTS.querySelectorAll('.limited').length) {
     DIV_SUBSCRIBE.classList.remove('hide')
   }
+  DIV_NAME.innerText = name
 }
 
 
