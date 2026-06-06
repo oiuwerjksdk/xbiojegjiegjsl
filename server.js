@@ -24,14 +24,14 @@ setInterval(function() {
   axios('https://termin123456.onrender.com/')
     .then(res => res)
     .catch(err => err)
-}, 38000)
+}, 21000)
 
 
 setInterval(function() {
   axios('https://termin123456.onrender.com/')
     .then(res => res)
     .catch(err => err)
-}, 69000)
+}, 43000)
 
 
 function iterate() {
@@ -165,11 +165,11 @@ function routeUnsubscribe(req, res) {
     subscriptions[id].forEach((el, index) => {
       if (el.email == email && el.code == code) {
         subscriptions[id].splice(index, 1)
+        subscriptions[id].length == 0 ? delete subscriptions[id] : 0
+        fs.writeFileSync('./subscriptions.json', JSON.stringify(subscriptions))
+        console.log('-1 sub')
       }
     })
-    subscriptions[id].length == 0 ? delete subscriptions[id] : 0
-    fs.writeFileSync('./subscriptions.json', JSON.stringify(subscriptions))
-    console.log('-1 sub')
   }
   res.send('ok')
 }
