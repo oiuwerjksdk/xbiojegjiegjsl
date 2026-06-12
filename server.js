@@ -38,6 +38,7 @@ function iterate() {
   const IDs = Object.keys(subscriptions)
   let index = 0
   IDs.length ? check() : setTimeout(iterate, 1000)
+
   async function check() {
     if (index == IDs.length) {
       console.log('all done')
