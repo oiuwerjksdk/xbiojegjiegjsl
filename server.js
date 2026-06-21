@@ -22,14 +22,14 @@ app.listen(3000, () => {
 
 
 setInterval(function() {
-  axios('https://termin123.onrender.com/')
+  axios('https://terminhub.onrender.com/')
     .then(res => res)
     .catch(err => err)
 }, 12000)
 
 
 setInterval(function() {
-  axios('https://termin123.onrender.com/')
+  axios('https://terminhub.onrender.com/')
     .then(res => res)
     .catch(err => err)
 }, 41000)
@@ -66,7 +66,7 @@ function iterate() {
       console.log(counter, name, ':', subscriptions[data.id])
       if (counter > 1) {
         const subject = `${name} има нови термини`
-        const plain = `${name} има нови термини: https://termin123.onrender.com/timeslots.html?id=${id}`
+        const plain = `${name} има нови термини: https://terminhub.onrender.com/timeslots.html?id=${id}`
         subscriptions[id].forEach(el => {
           // console.log('mock send email', el.email, subject, plain)
           sendMaileroo(el.email, subject, plain)
@@ -100,8 +100,8 @@ async function getTimeslots(id) {
 function sendMaileroo(to, subject, plain) {
   const config = {
     "from": {
-      "address": "mojtermin@c9c7843d277b40a0.maileroo.org",
-      "display_name": "Мој Термин"
+      "address": "terminhub@c9c7843d277b40a0.maileroo.org",
+      "display_name": "Terminhub"
     },
     "to": [{
       "address": to
