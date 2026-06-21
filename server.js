@@ -22,14 +22,14 @@ app.listen(3000, () => {
 
 
 setInterval(function() {
-  axios('https://mojtermin.onrender.com/')
+  axios('https://termin123.onrender.com/')
     .then(res => res)
     .catch(err => err)
 }, 12000)
 
 
 setInterval(function() {
-  axios('https://mojtermin.onrender.com/')
+  axios('https://termin123.onrender.com/')
     .then(res => res)
     .catch(err => err)
 }, 41000)
@@ -66,7 +66,7 @@ function iterate() {
       console.log(counter, name, ':', subscriptions[data.id])
       if (counter > 1) {
         const subject = `${name} има нови термини`
-        const plain = `${name} има нови термини: https://mojtermin.onrender.com/timeslots.html?id=${id}`
+        const plain = `${name} има нови термини: https://termin123.onrender.com/timeslots.html?id=${id}`
         subscriptions[id].forEach(el => {
           // console.log('mock send email', el.email, subject, plain)
           sendMaileroo(el.email, subject, plain)
