@@ -2,8 +2,9 @@ const fs = require('fs')
 const axios = require('axios')
 const express = require('express')
 const app = express()
-let subscriptions = require('./subscriptions.json')
 let database = require('./public/database.json')
+let subscriptions = require('./subscriptions.json')
+let temp = {}
 
 
 app.use(express.static('public'))
@@ -21,14 +22,14 @@ app.listen(3000, () => {
 
 
 setInterval(function() {
-  axios('https://termin123456.onrender.com/')
+  axios('https://termin???.onrender.com/')
     .then(res => res)
     .catch(err => err)
 }, 12000)
 
 
 setInterval(function() {
-  axios('https://termin123456.onrender.com/')
+  axios('https://termin???.onrender.com/')
     .then(res => res)
     .catch(err => err)
 }, 41000)
@@ -65,10 +66,10 @@ function iterate() {
       console.log(counter, name, ':', subscriptions[data.id])
       if (counter > 1) {
         const subject = `${name} има нови термини`
-        const plain = `${name} има нови термини: https://termin123456.onrender.com/timeslots.html?id=${id}`
+        const plain = `${name} има нови термини: https://termin???.onrender.com/timeslots.html?id=${id}`
         subscriptions[id].forEach(el => {
-          sendMaileroo(el.email, subject, plain)
           // console.log('mock send email', el.email, subject, plain)
+          sendMaileroo(el.email, subject, plain)
         })
         delete subscriptions[id]
         fs.writeFileSync('./subscriptions.json', JSON.stringify(subscriptions))
@@ -81,17 +82,25 @@ function iterate() {
 
 
 async function getTimeslots(id) {
-  const res = await axios(`https://mojtermin.mk/api/pp/resources/${id}/slots_availability`, {
-    signal: AbortSignal.timeout(4000)
-  })
-  return res.data
+  if (!temp[id] || Date.now() - temp[id].time > 500) {
+    const res = await axios(`https://mojtermin.mk/api/pp/resources/${id}/slots_availability`, {
+      signal: AbortSignal.timeout(4000)
+    })
+    temp[id] = {
+      data: res.data,
+      time: Date.now()
+    }
+    return res.data
+  } else {
+    return temp[id].data
+  }
 }
 
 
 function sendMaileroo(to, subject, plain) {
   const config = {
     "from": {
-      "address": "termin@c9c7843d277b40a0.maileroo.org",
+      "address": "termin???@c9c7843d277b40a0.maileroo.org",
       "display_name": "Термин"
     },
     "to": [{
@@ -141,21 +150,21 @@ async function routeTimeslots(req, res) {
 
 function routeSubscribe(req, res) {
   const { id, code, email } = req.query
-  if (email && code && IDInfo(id) && !alreadyIs()) {
+  if (email && code && IDInfo(id) && !alreadySub()) {
     subscriptions[id] ? subscriptions[id].push({ email, code }) : subscriptions[id] = [{ email, code }]
     fs.writeFileSync('./subscriptions.json', JSON.stringify(subscriptions))
     console.log('+1 sub')
   }
   res.send('ok')
 
-  function alreadyIs() {
-    let x = false
+  function alreadySub() {
+    let isIt = false
     if (subscriptions[id]) {
       subscriptions[id].forEach(el => {
-        email == el.email ? x = true : 0
+        email == el.email ? isIt = true : 0
       })
     }
-    return x
+    return isIt
   }
 }
 
