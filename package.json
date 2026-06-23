@@ -1,5 +1,5 @@
 {
-  "name": "xbiojegjiegjsl",
+  "name": "termini",
   "version": "1.0.0",
   "description": "",
   "license": "ISC",
@@ -11,7 +11,7 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "axios": "^1.18.0",
+    "axios": "^1.18.1",
     "express": "^5.2.1"
   },
   "nodemonConfig": {
