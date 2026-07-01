@@ -25,14 +25,14 @@ setInterval(function() {
   axios('https://terminhub.onrender.com/')
     .then(res => res)
     .catch(err => err)
-}, 12000)
+}, 16765)
 
 
 setInterval(function() {
   axios('https://terminhub.onrender.com/')
     .then(res => res)
     .catch(err => err)
-}, 41000)
+}, 34763)
 
 
 function iterate() {
