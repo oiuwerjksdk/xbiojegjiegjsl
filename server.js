@@ -4,6 +4,7 @@ const express = require('express')
 const app = express()
 let database = require('./public/database.json')
 let subscriptions = require('./subscriptions.json')
+let subscriptions2 = require('./subscriptions2.json')
 let temp = {}
 
 
@@ -17,19 +18,20 @@ app.get('/unsubscribe', (req, res) => routeUnsubscribe(req, res))
 app.listen(3000, () => {
   console.log(`Server is running on port 3000...`)
   iterate()
+  iterate2()
   updateDB()
 })
 
 
 setInterval(function() {
-  axios('https://terminhub.onrender.com/')
+  axios('https://mojtermin2.onrender.com/')
     .then(res => res)
     .catch(err => err)
 }, 16765)
 
 
 setInterval(function() {
-  axios('https://terminhub.onrender.com/')
+  axios('https://mojtermin2.onrender.com/')
     .then(res => res)
     .catch(err => err)
 }, 34763)
@@ -63,16 +65,55 @@ function iterate() {
           el.isAvailable ? counter++ : 0
         })
       }
-      console.log(counter, name, ':', subscriptions[data.id])
+      console.log(counter, name, ':', subscriptions[id])
       if (counter > 1) {
-        const subject = `${name} има нови термини`
-        const plain = `${name} има нови термини: https://terminhub.onrender.com/timeslots.html?id=${id}`
-        subscriptions[id].forEach(el => {
-          // console.log('mock send email', el.email, subject, plain)
-          sendMaileroo(el.email, subject, plain)
-        })
+        notify(id, name)
+        subscriptions2[id] = subscriptions[id]
         delete subscriptions[id]
         fs.writeFileSync('./subscriptions.json', JSON.stringify(subscriptions))
+        fs.writeFileSync('./subscriptions2.json', JSON.stringify(subscriptions2))
+      }
+    } catch (err) {
+      console.log(err.message, id)
+    }
+  }
+}
+
+
+function iterate2() {
+  const IDs = Object.keys(subscriptions2)
+  let index = 0
+  IDs.length ? check() : setTimeout(iterate2, 1000)
+
+  async function check() {
+    if (index == IDs.length) {
+      console.log('all done 2')
+      iterate2()
+      return
+    }
+    const id = IDs[index]
+    if (!subscriptions2[id]) {
+      index++
+      check()
+      return
+    }
+    index++
+    setTimeout(check, 5000)
+    try {
+      const data = await getTimeslots(id)
+      const name = data.name.slice(0, 60)
+      let counter = 0
+      for (property in data.timeslots) {
+        data.timeslots[property].forEach(el => {
+          el.isAvailable ? counter++ : 0
+        })
+      }
+      console.log(counter, name, ':', subscriptions2[data.id], ' 2')
+      if (counter = 0) {
+        subscriptions[id] = subscriptions2[id]
+        delete subscriptions2[id]
+        fs.writeFileSync('./subscriptions.json', JSON.stringify(subscriptions))
+        fs.writeFileSync('./subscriptions2.json', JSON.stringify(subscriptions2))
       }
     } catch (err) {
       console.log(err.message, id)
@@ -97,11 +138,23 @@ async function getTimeslots(id) {
 }
 
 
+function notify(id, name) {
+  subscriptions[id].forEach(el => {
+    const subject = `${name} има слободни термини`
+    const plain = `${name} има слободни термини: https://mojtermin2.onrender.com/timeslots.html?id=${id}
+
+Ако не сакате известувања: https://mojtermin2.onrender.com/unsubscribe?id=${id}&email=${el.email}&code=${el.code}`
+    // console.log('mock send email', el.email, subject, plain)
+    sendMaileroo(el.email, subject, plain)
+  })
+}
+
+
 function sendMaileroo(to, subject, plain) {
   const config = {
     "from": {
-      "address": "terminhub@c9c7843d277b40a0.maileroo.org",
-      "display_name": "Terminhub"
+      "address": "mojtermin2@c9c7843d277b40a0.maileroo.org",
+      "display_name": "Mojtermin2"
     },
     "to": [{
       "address": to
@@ -164,6 +217,11 @@ function routeSubscribe(req, res) {
         email == el.email ? isIt = true : 0
       })
     }
+    if (subscriptions2[id]) {
+      subscriptions2[id].forEach(el => {
+        email == el.email ? isIt = true : 0
+      })
+    }
     return isIt
   }
 }
@@ -181,7 +239,17 @@ function routeUnsubscribe(req, res) {
       }
     })
   }
-  res.send('ok')
+  if (subscriptions2[id]) {
+    subscriptions2[id].forEach((el, index) => {
+      if (el.email == email && el.code == code) {
+        subscriptions2[id].splice(index, 1)
+        subscriptions2[id].length == 0 ? delete subscriptions2[id] : 0
+        fs.writeFileSync('./subscriptions2.json', JSON.stringify(subscriptions2))
+        console.log('-1 sub 2')
+      }
+    })
+  }
+  res.send('ok<script>alert("Исклучено")</script>')
 }
 
 
