@@ -99,7 +99,7 @@ function RENDER(timeslots, name) {
 DIV_SUBSCRIBE.addEventListener('click', CLICK_SUBSCRIBE)
 
 async function CLICK_SUBSCRIBE() {
-  const email = prompt(`Внесете ваша емаил адреса и ќе ви стигне порака штом има нови термини:`)
+  const email = prompt(`Внесете ваша е-маил адреса и ќе ви стигне порака штом има слободни термини:`)
   if (email == undefined) {
     return
   }
@@ -114,7 +114,7 @@ async function CLICK_SUBSCRIBE() {
     })
     const text = await res.text()
     if (text == 'ok') {
-      alert('✅ Ќе ви стигне порака штом има нови термини')
+      alert('✅ Ќе ви стигне порака штом има слободни термини.')
     } else {
       alert('❌ Неуспешно! Пробај повторно')
     }
