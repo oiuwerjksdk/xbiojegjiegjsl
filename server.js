@@ -154,7 +154,7 @@ function sendMaileroo(to, subject, plain) {
   const config = {
     "from": {
       "address": "mojtermin2@c9c7843d277b40a0.maileroo.org",
-      "display_name": "Mojtermin2"
+      "display_name": "mojtermin2.onrender.com"
     },
     "to": [{
       "address": to
