@@ -24,18 +24,66 @@ app.listen(3000, () => {
 })
 
 
-setInterval(function() {
-  axios('https://mojtermin2.onrender.com/')
-    .then(res => res)
-    .catch(err => err)
-}, 16765)
+async function routeTimeslots(req, res) {
+  try {
+    const data = await getTimeslots(req.query.id)
+    data ? res.send(data) : res.status(400).send()
+  } catch (err) {
+    console.log('ERR routeTimeslots:', err.message, req.query.id)
+  }
+}
 
 
-setInterval(function() {
-  axios('https://mojtermin2.onrender.com/')
-    .then(res => res)
-    .catch(err => err)
-}, 34763)
+function routeSubscribe(req, res) {
+  const { id, code, email } = req.query
+  if (email && code && IDInfo(id) && !alreadySub()) {
+    subscriptions[id] ? subscriptions[id].push({ email, code }) : subscriptions[id] = [{ email, code }]
+    fs.writeFileSync('./subscriptions.json', JSON.stringify(subscriptions))
+    console.log('+1 sub')
+  }
+  res.send('ok')
+
+  function alreadySub() {
+    let isIt = false
+    if (subscriptions[id]) {
+      subscriptions[id].forEach(el => {
+        email == el.email ? isIt = true : 0
+      })
+    }
+    if (subscriptions2[id]) {
+      subscriptions2[id].forEach(el => {
+        email == el.email ? isIt = true : 0
+      })
+    }
+    return isIt
+  }
+}
+
+
+function routeUnsubscribe(req, res) {
+  const { id, code, email } = req.query
+  if (subscriptions[id]) {
+    subscriptions[id].forEach((el, index) => {
+      if (el.email == email && el.code == code) {
+        subscriptions[id].splice(index, 1)
+        subscriptions[id].length == 0 ? delete subscriptions[id] : 0
+        fs.writeFileSync('./subscriptions.json', JSON.stringify(subscriptions))
+        console.log('-1 sub')
+      }
+    })
+  }
+  if (subscriptions2[id]) {
+    subscriptions2[id].forEach((el, index) => {
+      if (el.email == email && el.code == code) {
+        subscriptions2[id].splice(index, 1)
+        subscriptions2[id].length == 0 ? delete subscriptions2[id] : 0
+        fs.writeFileSync('./subscriptions2.json', JSON.stringify(subscriptions2))
+        console.log('-1 sub 2')
+      }
+    })
+  }
+  res.send('ok<script>alert("Исклучено")</script>')
+}
 
 
 function iterate() {
@@ -175,85 +223,6 @@ function sendMaileroo(to, subject, plain) {
 }
 
 
-function IDInfo(id) {
-  let info
-  database.forEach(el => {
-    if (el.id == id) {
-      info = {
-        name: el.name,
-        specialty: el.specialty,
-        location: el.location,
-        hospital: el.hospital,
-        tags: el.tags
-      }
-    }
-  })
-  return info
-}
-
-
-async function routeTimeslots(req, res) {
-  try {
-    const data = await getTimeslots(req.query.id)
-    data ? res.send(data) : res.status(400).send()
-  } catch (err) {
-    console.log('routeTimeslots()', err.message, req.query.id)
-  }
-}
-
-
-function routeSubscribe(req, res) {
-  const { id, code, email } = req.query
-  if (email && code && IDInfo(id) && !alreadySub()) {
-    subscriptions[id] ? subscriptions[id].push({ email, code }) : subscriptions[id] = [{ email, code }]
-    fs.writeFileSync('./subscriptions.json', JSON.stringify(subscriptions))
-    console.log('+1 sub')
-  }
-  res.send('ok')
-
-  function alreadySub() {
-    let isIt = false
-    if (subscriptions[id]) {
-      subscriptions[id].forEach(el => {
-        email == el.email ? isIt = true : 0
-      })
-    }
-    if (subscriptions2[id]) {
-      subscriptions2[id].forEach(el => {
-        email == el.email ? isIt = true : 0
-      })
-    }
-    return isIt
-  }
-}
-
-
-function routeUnsubscribe(req, res) {
-  const { id, code, email } = req.query
-  if (subscriptions[id]) {
-    subscriptions[id].forEach((el, index) => {
-      if (el.email == email && el.code == code) {
-        subscriptions[id].splice(index, 1)
-        subscriptions[id].length == 0 ? delete subscriptions[id] : 0
-        fs.writeFileSync('./subscriptions.json', JSON.stringify(subscriptions))
-        console.log('-1 sub')
-      }
-    })
-  }
-  if (subscriptions2[id]) {
-    subscriptions2[id].forEach((el, index) => {
-      if (el.email == email && el.code == code) {
-        subscriptions2[id].splice(index, 1)
-        subscriptions2[id].length == 0 ? delete subscriptions2[id] : 0
-        fs.writeFileSync('./subscriptions2.json', JSON.stringify(subscriptions2))
-        console.log('-1 sub 2')
-      }
-    })
-  }
-  res.send('ok<script>alert("Исклучено")</script>')
-}
-
-
 async function updateDB() {
   setTimeout(updateDB, 1000 * 60)
   try {
@@ -303,49 +272,37 @@ async function updateDB() {
     database = [...newDB]
     fs.writeFileSync('./public/database.json', JSON.stringify(database))
   } catch (err) {
-    console.log('updateDB() ERR:', err.message)
+    console.log('ERR updateDB:', err.message)
   }
 }
 
 
-// function sendNodemailer(to, subject, plain) {
-//   const transporter = nodemailer.createTransport({
-//     host: '???',
-//     port: 465,
-//     secure: true,
-//     auth: {
-//       user: '???',
-//       pass: '???'
-//     }
-//   })
-//   const mailOptions = {
-//     from: {
-//       name: '???',
-//       address: '???'
-//     },
-//     to: to,
-//     subject: subject,
-//     text: plain
-//   }
-//   transporter.sendMail(mailOptions, function(error, info) {
-//     if (error) {
-//       console.log('nodemailer ERR', error)
-//     } else {
-//       console.log('nodemailer OK')
-//     }
-//   })
-// }
+function IDInfo(id) {
+  let info
+  database.forEach(el => {
+    if (el.id == id) {
+      info = {
+        name: el.name,
+        specialty: el.specialty,
+        location: el.location,
+        hospital: el.hospital,
+        tags: el.tags
+      }
+    }
+  })
+  return info
+}
 
 
-// function sendTextbee(to, msg) {
-//   axios.post('https://api.textbee.dev/api/v1/gateway/devices/????????/send-sms', {
-//       recipients: to,
-//       message: msg,
-//     }, {
-//       headers: {
-//         'x-api-key': ''
-//       }
-//     })
-//     .then(res => console.log(res.status, 'textbee OK'))
-//     .catch(err => console.log(err.code, 'textbee ERR'))
-// }
+setInterval(function() {
+  axios('https://mojtermin2.onrender.com/')
+    .then(res => res)
+    .catch(err => err)
+}, 18347)
+
+
+setInterval(function() {
+  axios('https://mojtermin2.onrender.com/')
+    .then(res => res)
+    .catch(err => err)
+}, 29848)
