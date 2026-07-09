@@ -228,12 +228,12 @@ async function updateDB() {
   try {
     const res = await axios('https://mojtermin.mk/api/pp/side_navigation')
     const data = res.data
-    const newDB = []
+    const arr = []
     data[0].subsections.forEach(specijalnost => {
       specijalnost.subsections.forEach(lokacija => {
         lokacija.subsections.forEach(ustanova => {
           ustanova.subsections.forEach(doktor => {
-            newDB.push({
+            arr.push({
               id: doktor.id,
               name: doktor.name,
               specialty: specijalnost.name,
@@ -249,7 +249,7 @@ async function updateDB() {
       tip.subsections.forEach(lokacija => {
         lokacija.subsections.forEach(ustanova => {
           ustanova.subsections.forEach(aparat => {
-            newDB.push({
+            arr.push({
               id: aparat.id,
               name: aparat.name,
               specialty: tip.name,
@@ -261,15 +261,7 @@ async function updateDB() {
         })
       })
     });
-    newDB.forEach(el => {
-      el.name.toLowerCase().includes('ртг') ? el.tags += ' рентген рендген ренген' : 0
-      el.hospital.toLowerCase().includes('гоб 8-ми септември') ? el.tags += ' 8ми осми' : 0
-      el.hospital.toLowerCase().includes('ук за') ? el.tags += ' универзитетска клиника клинички центар мајка тереза' : 0
-      el.hospital.toLowerCase().includes('ук по') ? el.tags += ' универзитетска клиника клинички центар мајка тереза' : 0
-      el.hospital.toLowerCase().includes('13 ноември') ? el.tags += ' 13ти 13-ти' : 0
-      el.location = el.location.replace('Град Скопје', 'Скопје')
-    })
-    database = [...newDB]
+    database = [...arr]
     fs.writeFileSync('./public/database.json', JSON.stringify(database))
   } catch (err) {
     console.log('ERR updateDB:', err.message)
