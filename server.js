@@ -193,6 +193,7 @@ function notify(id, name) {
     const plain = `${name} има слободни термини:
 https://mojtermin2.onrender.com/timeslots.html?id=${id}
 
+
 За да го исклучите известувањето:
 https://mojtermin2.onrender.com/unsubscribe?id=${id}&email=${el.email}&code=${el.code}`
     // console.log('mock send email', el.email, subject, plain)
