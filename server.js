@@ -190,9 +190,11 @@ async function getTimeslots(id) {
 function notify(id, name) {
   subscriptions[id].forEach(el => {
     const subject = `${name} има слободни термини`
-    const plain = `${name} има слободни термини: https://mojtermin2.onrender.com/timeslots.html?id=${id}
+    const plain = `${name} има слободни термини:
+https://mojtermin2.onrender.com/timeslots.html?id=${id}
 
-Ако не сакате известувања: https://mojtermin2.onrender.com/unsubscribe?id=${id}&email=${el.email}&code=${el.code}`
+За да го исклучите известувањето:
+https://mojtermin2.onrender.com/unsubscribe?id=${id}&email=${el.email}&code=${el.code}`
     // console.log('mock send email', el.email, subject, plain)
     sendMaileroo(el.email, subject, plain)
   })
