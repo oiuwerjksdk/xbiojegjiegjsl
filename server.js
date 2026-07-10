@@ -158,7 +158,7 @@ function iterate2() {
         })
       }
       console.log(counter, name, ':', subscriptions2[data.id], ' 2')
-      if (counter = 0) {
+      if (counter == 0) {
         subscriptions[id] = subscriptions2[id]
         delete subscriptions2[id]
         fs.writeFileSync('./subscriptions.json', JSON.stringify(subscriptions))
