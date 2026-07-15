@@ -9,8 +9,6 @@ let temp = {}
 
 
 app.use(express.static('public'))
-app.get('/subs', (req, res) => res.send(subscriptions))
-app.get('/subs2', (req, res) => res.send(subscriptions2))
 app.get('/timeslots', (req, res) => routeTimeslots(req, res))
 app.get('/subscribe', (req, res) => routeSubscribe(req, res))
 app.get('/unsubscribe', (req, res) => routeUnsubscribe(req, res))
@@ -293,11 +291,11 @@ setInterval(function() {
   axios('https://mojtermin2.onrender.com/')
     .then(res => res)
     .catch(err => err)
-}, 18347)
+}, 24839)
 
 
 setInterval(function() {
   axios('https://mojtermin2.onrender.com/')
     .then(res => res)
     .catch(err => err)
-}, 29848)
+}, 46928)
