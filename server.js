@@ -277,14 +277,14 @@ function IDInfo(id) {
 
 
 setInterval(function() {
-  axios('https://mojtermin2.onrender.com/')
+  axios('https://mojtermin2.onrender.com/sub')
     .then(res => res)
     .catch(err => err)
-}, 23482)
+}, 345920)
 
 
 setInterval(function() {
-  axios('https://mojtermin2.onrender.com/')
+  axios('https://mojtermin2.onrender.com/unsub')
     .then(res => res)
     .catch(err => err)
-}, 76893)
+}, 656940)
