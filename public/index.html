@@ -10,13 +10,13 @@
 <script>
 const OL = document.querySelector('ol')
 const INPUT = document.querySelector('input')
-let DATABASE, TIMEOUT_SEARCH
+let DB, TIMEOUT_SEARCH
 
 
-fetch('./database.json', { signal: AbortSignal.timeout(4000) })
+fetch('./db.json', { signal: AbortSignal.timeout(4000) })
   .then(res => res.json())
   .then(data => {
-    DATABASE = data
+    DB = data
   })
   .catch(err => {
     document.body.innerHTML = '<div>Error - try refresh or return to homepage</div>'
@@ -38,7 +38,7 @@ function ON_INPUT() {
       .toLowerCase()
       .split(' ')
       .filter(el => el != '' && el != 'за' && el != 'на' && el != 'во')
-    const result = SEARCH(DATABASE, words)
+    const result = SEARCH(DB, words)
     RENDER(result)
   }, 50)
 }
@@ -63,7 +63,7 @@ function RENDER(result) {
   result.forEach((el, index) => {
     if (index < 99 && INPUT.value.replaceAll(' ', '')) {
       html +=
-        `<a href='/timeslots.html?id=${el.id}' target='_self'>
+        `<a href='/slots.html?id=${el.id}' target='_self'>
         <li>${el.name} (${el.specialty} - ${el.location})</li>
       </a>`
     }
