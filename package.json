@@ -16,9 +16,7 @@
   },
   "nodemonConfig": {
     "ignore": [
-      "public/",
-      "subscriptions.json",
-      "subscriptions2.json"
+      "public/"
     ]
   }
 }

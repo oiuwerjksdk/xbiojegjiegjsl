@@ -3,8 +3,8 @@ const axios = require('axios')
 const express = require('express')
 const app = express()
 let db = require('./public/db.json')
-let subs = require('./subs.json')
-let subs2 = require('./subs2.json')
+let subs = {}
+let subs2 = {}
 let temp = {}
 
 
@@ -36,7 +36,6 @@ function routeSub(req, res) {
   const { id, code, email } = req.query
   if (email && code && IDInfo(id) && !alreadySub()) {
     subs[id] ? subs[id].push({ email, code }) : subs[id] = [{ email, code }]
-    fs.writeFileSync('./subs.json', JSON.stringify(subs))
     console.log('+1 sub')
   }
   res.send('ok')
@@ -65,7 +64,6 @@ function routeUnsub(req, res) {
       if (el.email == email && el.code == code) {
         subs[id].splice(index, 1)
         subs[id].length == 0 ? delete subs[id] : 0
-        fs.writeFileSync('./subs.json', JSON.stringify(subs))
         console.log('-1 sub')
       }
     })
@@ -75,7 +73,6 @@ function routeUnsub(req, res) {
       if (el.email == email && el.code == code) {
         subs2[id].splice(index, 1)
         subs2[id].length == 0 ? delete subs2[id] : 0
-        fs.writeFileSync('./subs2.json', JSON.stringify(subs2))
         console.log('-1 sub 2')
       }
     })
@@ -117,8 +114,6 @@ function iterate() {
         notify(id, name)
         subs2[id] = subs[id]
         delete subs[id]
-        fs.writeFileSync('./subs.json', JSON.stringify(subs))
-        fs.writeFileSync('./subs2.json', JSON.stringify(subs2))
       }
     } catch (err) {
       console.log(err.message, id)
@@ -159,8 +154,6 @@ function iterate2() {
       if (counter == 0) {
         subs[id] = subs2[id]
         delete subs2[id]
-        fs.writeFileSync('./subs.json', JSON.stringify(subs))
-        fs.writeFileSync('./subs2.json', JSON.stringify(subs2))
       }
     } catch (err) {
       console.log(err.message, id)
@@ -239,8 +232,7 @@ async function updateDB() {
               name: doktor.name,
               specialty: specijalnost.name,
               hospital: ustanova.name,
-              location: lokacija.name,
-              tags: 'лекари доктори'
+              location: lokacija.name
             })
           })
         })
@@ -255,8 +247,7 @@ async function updateDB() {
               name: aparat.name,
               specialty: tip.name,
               hospital: ustanova.name,
-              location: lokacija.name,
-              tags: 'апарати'
+              location: lokacija.name
             })
           })
         })
@@ -278,8 +269,7 @@ function IDInfo(id) {
         name: el.name,
         specialty: el.specialty,
         location: el.location,
-        hospital: el.hospital,
-        tags: el.tags
+        hospital: el.hospital
       }
     }
   })
@@ -291,11 +281,11 @@ setInterval(function() {
   axios('https://mojtermin2.onrender.com/')
     .then(res => res)
     .catch(err => err)
-}, 24839)
+}, 23482)
 
 
 setInterval(function() {
   axios('https://mojtermin2.onrender.com/')
     .then(res => res)
     .catch(err => err)
-}, 46928)
+}, 76893)
