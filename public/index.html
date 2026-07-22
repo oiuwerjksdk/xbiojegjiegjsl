@@ -13,7 +13,7 @@ const INPUT = document.querySelector('input')
 let DB, TIMEOUT_SEARCH
 
 
-fetch('./db.json', { signal: AbortSignal.timeout(4000) })
+fetch('./db', { signal: AbortSignal.timeout(4000) })
   .then(res => res.json())
   .then(data => {
     DB = data
@@ -48,7 +48,7 @@ function SEARCH(arr, arr2) {
   const result = []
   arr.forEach(el => {
     let match = true
-    const tags = `${el.name} ${el.specialty} ${el.hospital} ${el.location} ${el.tags}`.toLowerCase()
+    const tags = `${el.name} ${el.specialty} ${el.hospital} ${el.location}`.toLowerCase()
     arr2.forEach(word => {
       !tags.includes(word) ? match = false : 0
     })
