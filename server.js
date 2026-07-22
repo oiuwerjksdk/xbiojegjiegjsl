@@ -2,16 +2,16 @@ const fs = require('fs')
 const axios = require('axios')
 const express = require('express')
 const app = express()
-let database = require('./public/database.json')
-let subscriptions = require('./subscriptions.json')
-let subscriptions2 = require('./subscriptions2.json')
+let db = require('./public/db.json')
+let subs = require('./subs.json')
+let subs2 = require('./subs2.json')
 let temp = {}
 
 
 app.use(express.static('public'))
-app.get('/timeslots', (req, res) => routeTimeslots(req, res))
-app.get('/subscribe', (req, res) => routeSubscribe(req, res))
-app.get('/unsubscribe', (req, res) => routeUnsubscribe(req, res))
+app.get('/slots', (req, res) => routeSlots(req, res))
+app.get('/sub', (req, res) => routeSub(req, res))
+app.get('/unsub', (req, res) => routeUnsub(req, res))
 
 
 app.listen(3000, () => {
@@ -22,34 +22,34 @@ app.listen(3000, () => {
 })
 
 
-async function routeTimeslots(req, res) {
+async function routeSlots(req, res) {
   try {
-    const data = await getTimeslots(req.query.id)
+    const data = await getSlots(req.query.id)
     data ? res.send(data) : res.status(400).send()
   } catch (err) {
-    console.log('ERR routeTimeslots:', err.message, req.query.id)
+    console.log('ERR routeSlots:', err.message, req.query.id)
   }
 }
 
 
-function routeSubscribe(req, res) {
+function routeSub(req, res) {
   const { id, code, email } = req.query
   if (email && code && IDInfo(id) && !alreadySub()) {
-    subscriptions[id] ? subscriptions[id].push({ email, code }) : subscriptions[id] = [{ email, code }]
-    fs.writeFileSync('./subscriptions.json', JSON.stringify(subscriptions))
+    subs[id] ? subs[id].push({ email, code }) : subs[id] = [{ email, code }]
+    fs.writeFileSync('./subs.json', JSON.stringify(subs))
     console.log('+1 sub')
   }
   res.send('ok')
 
   function alreadySub() {
     let isIt = false
-    if (subscriptions[id]) {
-      subscriptions[id].forEach(el => {
+    if (subs[id]) {
+      subs[id].forEach(el => {
         email == el.email ? isIt = true : 0
       })
     }
-    if (subscriptions2[id]) {
-      subscriptions2[id].forEach(el => {
+    if (subs2[id]) {
+      subs2[id].forEach(el => {
         email == el.email ? isIt = true : 0
       })
     }
@@ -58,34 +58,34 @@ function routeSubscribe(req, res) {
 }
 
 
-function routeUnsubscribe(req, res) {
+function routeUnsub(req, res) {
   const { id, code, email } = req.query
-  if (subscriptions[id]) {
-    subscriptions[id].forEach((el, index) => {
+  if (subs[id]) {
+    subs[id].forEach((el, index) => {
       if (el.email == email && el.code == code) {
-        subscriptions[id].splice(index, 1)
-        subscriptions[id].length == 0 ? delete subscriptions[id] : 0
-        fs.writeFileSync('./subscriptions.json', JSON.stringify(subscriptions))
+        subs[id].splice(index, 1)
+        subs[id].length == 0 ? delete subs[id] : 0
+        fs.writeFileSync('./subs.json', JSON.stringify(subs))
         console.log('-1 sub')
       }
     })
   }
-  if (subscriptions2[id]) {
-    subscriptions2[id].forEach((el, index) => {
+  if (subs2[id]) {
+    subs2[id].forEach((el, index) => {
       if (el.email == email && el.code == code) {
-        subscriptions2[id].splice(index, 1)
-        subscriptions2[id].length == 0 ? delete subscriptions2[id] : 0
-        fs.writeFileSync('./subscriptions2.json', JSON.stringify(subscriptions2))
+        subs2[id].splice(index, 1)
+        subs2[id].length == 0 ? delete subs2[id] : 0
+        fs.writeFileSync('./subs2.json', JSON.stringify(subs2))
         console.log('-1 sub 2')
       }
     })
   }
-  res.send('ok<script>alert("Исклучено")</script>')
+  res.send('ok<title>Исклучено</title><script>alert("Исклучено")</script>')
 }
 
 
 function iterate() {
-  const IDs = Object.keys(subscriptions)
+  const IDs = Object.keys(subs)
   let index = 0
   IDs.length ? check() : setTimeout(iterate, 1000)
 
@@ -96,7 +96,7 @@ function iterate() {
       return
     }
     const id = IDs[index]
-    if (!subscriptions[id]) {
+    if (!subs[id]) {
       index++
       check()
       return
@@ -104,21 +104,21 @@ function iterate() {
     index++
     setTimeout(check, 1000)
     try {
-      const data = await getTimeslots(id)
+      const data = await getSlots(id)
       const name = data.name.slice(0, 60)
       let counter = 0
-      for (property in data.timeslots) {
-        data.timeslots[property].forEach(el => {
+      for (property in data.slots) {
+        data.slots[property].forEach(el => {
           el.isAvailable ? counter++ : 0
         })
       }
-      console.log(counter, name, ':', subscriptions[id])
+      console.log(counter, name, ':', subs[id])
       if (counter > 1) {
         notify(id, name)
-        subscriptions2[id] = subscriptions[id]
-        delete subscriptions[id]
-        fs.writeFileSync('./subscriptions.json', JSON.stringify(subscriptions))
-        fs.writeFileSync('./subscriptions2.json', JSON.stringify(subscriptions2))
+        subs2[id] = subs[id]
+        delete subs[id]
+        fs.writeFileSync('./subs.json', JSON.stringify(subs))
+        fs.writeFileSync('./subs2.json', JSON.stringify(subs2))
       }
     } catch (err) {
       console.log(err.message, id)
@@ -128,7 +128,7 @@ function iterate() {
 
 
 function iterate2() {
-  const IDs = Object.keys(subscriptions2)
+  const IDs = Object.keys(subs2)
   let index = 0
   IDs.length ? check() : setTimeout(iterate2, 1000)
 
@@ -139,7 +139,7 @@ function iterate2() {
       return
     }
     const id = IDs[index]
-    if (!subscriptions2[id]) {
+    if (!subs2[id]) {
       index++
       check()
       return
@@ -147,20 +147,20 @@ function iterate2() {
     index++
     setTimeout(check, 5000)
     try {
-      const data = await getTimeslots(id)
+      const data = await getSlots(id)
       const name = data.name.slice(0, 60)
       let counter = 0
-      for (property in data.timeslots) {
-        data.timeslots[property].forEach(el => {
+      for (property in data.slots) {
+        data.slots[property].forEach(el => {
           el.isAvailable ? counter++ : 0
         })
       }
-      console.log(counter, name, ':', subscriptions2[data.id], ' 2')
+      console.log(counter, name, ':', subs2[data.id], ' 2')
       if (counter == 0) {
-        subscriptions[id] = subscriptions2[id]
-        delete subscriptions2[id]
-        fs.writeFileSync('./subscriptions.json', JSON.stringify(subscriptions))
-        fs.writeFileSync('./subscriptions2.json', JSON.stringify(subscriptions2))
+        subs[id] = subs2[id]
+        delete subs2[id]
+        fs.writeFileSync('./subs.json', JSON.stringify(subs))
+        fs.writeFileSync('./subs2.json', JSON.stringify(subs2))
       }
     } catch (err) {
       console.log(err.message, id)
@@ -169,7 +169,7 @@ function iterate2() {
 }
 
 
-async function getTimeslots(id) {
+async function getSlots(id) {
   if (!temp[id] || Date.now() - temp[id].time > 500) {
     const res = await axios(`https://mojtermin.mk/api/pp/resources/${id}/slots_availability`, {
       signal: AbortSignal.timeout(4000)
@@ -186,14 +186,14 @@ async function getTimeslots(id) {
 
 
 function notify(id, name) {
-  subscriptions[id].forEach(el => {
-    const subject = `${name} има слободни термини`
-    const plain = `${name} има слободни термини:
-https://mojtermin2.onrender.com/timeslots.html?id=${id}
+  subs[id].forEach(el => {
+    const subject = `${name} има нови термини`
+    const plain = `${name} има нови термини:
+https://mojtermin2.onrender.com/slots.html?id=${id}
 
 
 За да го исклучите известувањето:
-https://mojtermin2.onrender.com/unsubscribe?id=${id}&email=${el.email}&code=${el.code}`
+https://mojtermin2.onrender.com/unsub?id=${id}&email=${el.email}&code=${el.code}`
     // console.log('mock send email', el.email, subject, plain)
     sendMaileroo(el.email, subject, plain)
   })
@@ -262,8 +262,8 @@ async function updateDB() {
         })
       })
     });
-    database = [...arr]
-    fs.writeFileSync('./public/database.json', JSON.stringify(database))
+    db = [...arr]
+    fs.writeFileSync('./public/db.json', JSON.stringify(db))
   } catch (err) {
     console.log('ERR updateDB:', err.message)
   }
@@ -272,7 +272,7 @@ async function updateDB() {
 
 function IDInfo(id) {
   let info
-  database.forEach(el => {
+  db.forEach(el => {
     if (el.id == id) {
       info = {
         name: el.name,
