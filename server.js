@@ -1,14 +1,14 @@
-const fs = require('fs')
 const axios = require('axios')
 const express = require('express')
 const app = express()
-let db = require('./public/db.json')
+let db = []
 let subs = {}
 let subs2 = {}
 let temp = {}
 
 
 app.use(express.static('public'))
+app.get('/db', (req, res) => res.send(db))
 app.get('/slots', (req, res) => routeSlots(req, res))
 app.get('/sub', (req, res) => routeSub(req, res))
 app.get('/unsub', (req, res) => routeUnsub(req, res))
@@ -254,7 +254,6 @@ async function updateDB() {
       })
     });
     db = [...arr]
-    fs.writeFileSync('./public/db.json', JSON.stringify(db))
   } catch (err) {
     console.log('ERR updateDB:', err.message)
   }
