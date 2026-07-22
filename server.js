@@ -218,7 +218,7 @@ function sendMaileroo(to, subject, plain) {
 
 
 async function updateDB() {
-  setTimeout(updateDB, 1000 * 60)
+  setTimeout(updateDB, 1000 * 60 * 15)
   try {
     const res = await axios('https://mojtermin.mk/api/pp/side_navigation')
     const data = res.data
