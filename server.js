@@ -199,8 +199,8 @@ https://mojtermin2.onrender.com/slots.html?id=${id}
 
 За да го исклучите известувањето:
 https://mojtermin2.onrender.com/unsub?id=${id}&email=${el.email}&code=${el.code}`
-    console.log('mock send email', el.email, subject, plain)
-    // sendMaileroo(el.email, subject, plain)
+    // console.log('mock send email', el.email, subject, plain)
+    sendMaileroo(el.email, subject, plain)
   })
 }
 
