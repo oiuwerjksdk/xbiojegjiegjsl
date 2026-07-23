@@ -1,10 +1,20 @@
 const axios = require('axios')
 const express = require('express')
 const app = express()
-let db = []
-let subs = {}
+let subs = {
+  "891280660": [{
+    "email": "sobelotokuche@protonmail.com",
+    "code": "4518529605136332"
+  }],
+  "1112098513": [{
+    "email": "sobelotokuche@protonmail.com",
+    "code": "8610898238262793"
+  }]
+}
+// subs = {}
 let subs2 = {}
 let temp = {}
+let db = []
 
 
 app.use(express.static('public'))
@@ -12,6 +22,8 @@ app.get('/db', (req, res) => res.send(db))
 app.get('/slots', (req, res) => routeSlots(req, res))
 app.get('/sub', (req, res) => routeSub(req, res))
 app.get('/unsub', (req, res) => routeUnsub(req, res))
+app.get('/subs', (req, res) => res.send(subs))
+app.get('/subs2', (req, res) => res.send(subs2))
 
 
 app.listen(3000, () => {
@@ -88,7 +100,7 @@ function iterate() {
 
   async function check() {
     if (index == IDs.length) {
-      console.log('all done')
+      console.log('done')
       iterate()
       return
     }
@@ -104,12 +116,12 @@ function iterate() {
       const data = await getSlots(id)
       const name = data.name.slice(0, 60)
       let counter = 0
-      for (property in data.slots) {
-        data.slots[property].forEach(el => {
+      for (property in data.timeslots) {
+        data.timeslots[property].forEach(el => {
           el.isAvailable ? counter++ : 0
         })
       }
-      console.log(counter, name, ':', subs[id])
+      console.log(counter, name)
       if (counter > 1) {
         notify(id, name)
         subs2[id] = subs[id]
@@ -129,7 +141,7 @@ function iterate2() {
 
   async function check() {
     if (index == IDs.length) {
-      console.log('all done 2')
+      console.log('done 2')
       iterate2()
       return
     }
@@ -145,18 +157,18 @@ function iterate2() {
       const data = await getSlots(id)
       const name = data.name.slice(0, 60)
       let counter = 0
-      for (property in data.slots) {
-        data.slots[property].forEach(el => {
+      for (property in data.timeslots) {
+        data.timeslots[property].forEach(el => {
           el.isAvailable ? counter++ : 0
         })
       }
-      console.log(counter, name, ':', subs2[data.id], ' 2')
+      console.log(counter, name, ' 2')
       if (counter == 0) {
         subs[id] = subs2[id]
         delete subs2[id]
       }
     } catch (err) {
-      console.log(err.message, id)
+      console.log(err.message, id, ' 2')
     }
   }
 }
@@ -187,8 +199,8 @@ https://mojtermin2.onrender.com/slots.html?id=${id}
 
 За да го исклучите известувањето:
 https://mojtermin2.onrender.com/unsub?id=${id}&email=${el.email}&code=${el.code}`
-    // console.log('mock send email', el.email, subject, plain)
-    sendMaileroo(el.email, subject, plain)
+    console.log('mock send email', el.email, subject, plain)
+    // sendMaileroo(el.email, subject, plain)
   })
 }
 
