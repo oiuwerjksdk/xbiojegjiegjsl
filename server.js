@@ -4,11 +4,11 @@ const app = express()
 let subs = {
   "891280660": [{
     "email": "sobelotokuche@protonmail.com",
-    "code": "4518529605136332"
+    "code": "123"
   }],
   "1112098513": [{
     "email": "sobelotokuche@protonmail.com",
-    "code": "8610898238262793"
+    "code": "123"
   }]
 }
 // subs = {}
@@ -208,7 +208,7 @@ https://mojtermin2.onrender.com/unsub?id=${id}&email=${el.email}&code=${el.code}
 function sendMaileroo(to, subject, plain) {
   const config = {
     "from": {
-      "address": "mojtermin2@c9c7843d277b40a0.maileroo.org",
+      "address": "mojtermin2@546efd10e8c3419e.maileroo.org",
       "display_name": "mojtermin2.onrender.com"
     },
     "to": [{
@@ -221,7 +221,7 @@ function sendMaileroo(to, subject, plain) {
       signal: AbortSignal.timeout(4000),
       headers: {
         "Content-Type": "application/json",
-        "X-Api-Key": '723eb9048e7d19db5c183b8ac4145304a6d36b5b9a79a48e9a7de516d0ed72e3'
+        "X-Api-Key": '096308984c35ee8ed28cb5c34ecd5d34f71ce1fb522d1cf282d064e9ec9cab6f'
       }
     })
     .then(res => console.log(res.status, 'maileroo OK'))
