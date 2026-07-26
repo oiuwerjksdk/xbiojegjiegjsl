@@ -292,11 +292,11 @@ setInterval(function() {
   axios('https://mojtermin2.onrender.com/sub')
     .then(res => res)
     .catch(err => err)
-}, 345920)
+}, 458909)
 
 
 setInterval(function() {
   axios('https://mojtermin2.onrender.com/unsub')
     .then(res => res)
     .catch(err => err)
-}, 656940)
+}, 726381)
