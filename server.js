@@ -152,7 +152,7 @@ function iterate2() {
       return
     }
     index++
-    setTimeout(check, 1000 * 60)
+    setTimeout(check, 1000 * 60 * 10)
     try {
       const data = await getSlots(id)
       const name = data.name.slice(0, 60)
