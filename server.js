@@ -194,11 +194,11 @@ function notify(id, name) {
   subs[id].forEach(el => {
     const subject = `${name} има нови термини`
     const plain = `${name} има нови термини:
-https://mojtermin2.onrender.com/slots.html?id=${id}
+https://izvestime.onrender.com/slots.html?id=${id}
 
 
 За да го исклучите известувањето:
-https://mojtermin2.onrender.com/unsub?id=${id}&email=${el.email}&code=${el.code}`
+https://izvestime.onrender.com/unsub?id=${id}&email=${el.email}&code=${el.code}`
     // console.log('mock send email', el.email, subject, plain)
     sendMaileroo(el.email, subject, plain)
   })
@@ -208,8 +208,8 @@ https://mojtermin2.onrender.com/unsub?id=${id}&email=${el.email}&code=${el.code}
 function sendMaileroo(to, subject, plain) {
   const config = {
     "from": {
-      "address": "mojtermin2@546efd10e8c3419e.maileroo.org",
-      "display_name": "mojtermin2.onrender.com"
+      "address": "izvestime@546efd10e8c3419e.maileroo.org",
+      "display_name": "izvestime.onrender.com"
     },
     "to": [{
       "address": to
@@ -289,14 +289,14 @@ function IDInfo(id) {
 
 
 setInterval(function() {
-  axios('https://mojtermin2.onrender.com/sub')
+  axios('https://izvestime.onrender.com/sub')
     .then(res => res)
     .catch(err => err)
 }, 458909)
 
 
 setInterval(function() {
-  axios('https://mojtermin2.onrender.com/unsub')
+  axios('https://izvestime.onrender.com/unsub')
     .then(res => res)
     .catch(err => err)
 }, 726381)
