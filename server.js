@@ -2,6 +2,14 @@ const axios = require('axios')
 const express = require('express')
 const app = express()
 let subs = {
+  "813090736": [{
+    "email": "sobelotokuche@protonmail.com",
+    "code": "14239193726212673"
+  }],
+  "891280643": [{
+    "email": "sobelotokuche@protonmail.com",
+    "code": "15265942568415503"
+  }],
   "891280660": [{
     "email": "sobelotokuche@protonmail.com",
     "code": "123"
@@ -9,6 +17,10 @@ let subs = {
   "1112098513": [{
     "email": "sobelotokuche@protonmail.com",
     "code": "123"
+  }],
+  "2250380480": [{
+    "email": "sobelotokuche@protonmail.com",
+    "code": "40720841317032297"
   }]
 }
 // subs = {}
