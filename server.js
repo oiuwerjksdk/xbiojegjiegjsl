@@ -42,7 +42,7 @@ app.listen(3000, () => {
   console.log(`Server is running on port 3000...`)
   iterate()
   iterate2()
-  updateDB()
+  // updateDB()
 })
 
 
@@ -304,7 +304,7 @@ setInterval(function() {
   axios('https://izvestime.onrender.com/sub')
     .then(res => res)
     .catch(err => err)
-}, 458909)
+}, 528909)
 
 
 setInterval(function() {
