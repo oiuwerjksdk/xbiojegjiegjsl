@@ -1,16 +1,15 @@
 const axios = require('axios')
 const express = require('express')
 const app = express()
-let subs = {}
-// subs = {}
-let subs2 = {}
-let temp = {}
 let db = []
+let temp = {}
+let subs = {}
+let subs2 = {}
 
 
 app.use(express.static('public'))
-app.get('/db', (req, res) => res.send(db))
 app.get('/slots', (req, res) => routeSlots(req, res))
+app.get('/db', (req, res) => res.send(db))
 app.get('/sub', (req, res) => routeSub(req, res))
 app.get('/unsub', (req, res) => routeUnsub(req, res))
 app.get('/subs', (req, res) => res.send(subs))
@@ -19,9 +18,9 @@ app.get('/subs2', (req, res) => res.send(subs2))
 
 app.listen(3000, () => {
   console.log(`Server is running on port 3000...`)
-  iterate()
-  iterate2()
   updateDB()
+  check()
+  check2()
 })
 
 
@@ -30,7 +29,7 @@ async function routeSlots(req, res) {
     const data = await getSlots(req.query.id)
     data ? res.send(data) : res.status(400).send()
   } catch (err) {
-    console.log('ERR routeSlots:', err.message, req.query.id)
+    console.log('routeSlots err: ', err.message, req.query.id)
   }
 }
 
@@ -39,7 +38,6 @@ function routeSub(req, res) {
   const { id, code, email } = req.query
   if (email && code && IDInfo(id) && !alreadySub()) {
     subs[id] ? subs[id].push({ email, code }) : subs[id] = [{ email, code }]
-    console.log('+1 sub')
   }
   res.send('ok')
 
@@ -67,7 +65,6 @@ function routeUnsub(req, res) {
       if (el.email == email && el.code == code) {
         subs[id].splice(index, 1)
         subs[id].length == 0 ? delete subs[id] : 0
-        console.log('-1 sub')
       }
     })
   }
@@ -76,33 +73,32 @@ function routeUnsub(req, res) {
       if (el.email == email && el.code == code) {
         subs2[id].splice(index, 1)
         subs2[id].length == 0 ? delete subs2[id] : 0
-        console.log('-1 sub 2')
       }
     })
   }
-  res.send('ok<title>Исклучено</title><script>alert("Исклучено")</script>')
+  res.send('<h1>ok</h1><title>Исклучено</title><script>alert("Исклучено")</script>')
 }
 
 
-function iterate() {
+function check() {
   const IDs = Object.keys(subs)
   let index = 0
-  IDs.length ? check() : setTimeout(iterate, 1000)
+  IDs.length ? doCheck() : setTimeout(check, 1000)
 
-  async function check() {
+  async function doCheck() {
     if (index == IDs.length) {
       console.log('done')
-      iterate()
+      check()
       return
     }
     const id = IDs[index]
     if (!subs[id]) {
       index++
-      check()
+      doCheck()
       return
     }
     index++
-    setTimeout(check, 1000)
+    setTimeout(doCheck, 1000)
     try {
       const data = await getSlots(id)
       const name = data.name.slice(0, 60)
@@ -119,31 +115,30 @@ function iterate() {
         delete subs[id]
       }
     } catch (err) {
-      console.log(err.message, id)
+      console.log('doCheck err: ', err.message)
     }
   }
 }
 
 
-function iterate2() {
+function check2() {
   const IDs = Object.keys(subs2)
   let index = 0
-  IDs.length ? check() : setTimeout(iterate2, 1000)
+  IDs.length ? doCheck() : setTimeout(check2, 1000)
 
-  async function check() {
+  async function doCheck() {
     if (index == IDs.length) {
-      console.log('done 2')
-      iterate2()
+      check2()
       return
     }
     const id = IDs[index]
     if (!subs2[id]) {
       index++
-      check()
+      doCheck()
       return
     }
     index++
-    setTimeout(check, 1000 * 60 * 10)
+    setTimeout(doCheck, 1000 * 60 * 10)
     try {
       const data = await getSlots(id)
       const name = data.name.slice(0, 60)
@@ -153,13 +148,12 @@ function iterate2() {
           el.isAvailable ? counter++ : 0
         })
       }
-      console.log(counter, name, ' 2')
       if (counter == 0) {
         subs[id] = subs2[id]
         delete subs2[id]
       }
     } catch (err) {
-      console.log(err.message, id, ' 2')
+      console.log('doCheck2 err: ', err.message)
     }
   }
 }
@@ -215,8 +209,8 @@ function sendMaileroo(to, subject, plain) {
         "X-Api-Key": '096308984c35ee8ed28cb5c34ecd5d34f71ce1fb522d1cf282d064e9ec9cab6f'
       }
     })
-    .then(res => console.log(res.status, 'maileroo OK'))
-    .catch(err => console.log(err, 'maileroo ERR'))
+    .then(res => console.log('maileroo ok ', res.status))
+    .catch(err => console.log('maileroo err: ', err))
 }
 
 
@@ -258,7 +252,7 @@ async function updateDB() {
     });
     db = [...arr]
   } catch (err) {
-    console.log('ERR updateDB:', err.message)
+    console.log('updateDB err: ', err.message)
   }
 }
 
